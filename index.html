@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Teste — GitHub Pages</title>
+  <style>
+    body { font-family: system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial; margin: 2rem; color:#0b1220; background:#f6fbff; }
+    .card { background: #fff; padding: 1.25rem 1.5rem; border-radius: 8px; box-shadow: 0 6px 18px rgba(10,30,60,0.08); max-width:720px; }
+    h1 { margin: 0 0 0.25rem 0; font-size: 1.6rem; color:#07203a; }
+    p { margin: 0.25rem 0 0.75rem 0; color:#234; }
+    .ok { display:inline-block; padding:0.35rem 0.6rem; border-radius:6px; background:#e6fff1; color:#045d2b; font-weight:600; }
+    footer { margin-top:1rem; color:#445; font-size:0.9rem; }
+    code { background:#f1f5ff; padding:0.15rem 0.35rem; border-radius:4px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Teste — GitHub Pages</h1>
+    <p>Se você está vendo esta página, o <strong>index.html</strong> foi publicado corretamente.</p>
+
+    <p id="status"><span class="ok">Verificando...</span></p>
+
+    <p>Endereço esperado do site: <code>https://mateuzkl.github.io</code></p>
+
+    <footer>
+      Dica: depois de subir este arquivo, vá em <strong>Settings → Pages</strong> e confirme a branch <code>main</code> e a pasta <code>/ (root)</code>.
+    </footer>
+  </div>
+
+  <script>
+    // Mensagem de confirmação dinâmica
+    (function(){
+      const status = document.getElementById('status');
+      const host = location.hostname || '';
+      if (host.includes('github.io')) {
+        status.innerHTML = '<span class="ok">Tudo certo — site hospedado em <code>' + host + '</code></span>';
+      } else {
+        status.innerHTML = '<span style="color:#8a3d00;background:#fff4e6;padding:0.35rem 0.6rem;border-radius:6px;font-weight:600">Arquivo carregado localmente ou em outro host: <code>' + host + '</code></span>';
+      }
+    })();
+  </script>
+</body>
+</html>
