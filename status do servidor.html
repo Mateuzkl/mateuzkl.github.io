@@ -1,285 +1,44 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Limitador de Multi-Client TFS - Conformidade OTServList</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            max-width: 900px;
-            margin: 40px auto;
-            padding: 20px;
-            line-height: 1.6;
-            background: #f5f5f5;
-        }
-        .container {
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        h1 {
-            color: #2c3e50;
-            border-bottom: 3px solid #3498db;
-            padding-bottom: 10px;
-        }
-        h2 {
-            color: #34495e;
-            margin-top: 30px;
-        }
-        .warning {
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
-            padding: 15px;
-            margin: 20px 0;
-        }
-        .info {
-            background: #d1ecf1;
-            border-left: 4px solid #17a2b8;
-            padding: 15px;
-            margin: 20px 0;
-        }
-        .success {
-            background: #e8f5e9;
-            border-left: 4px solid #4caf50;
-            padding: 15px;
-            margin: 15px 0;
-        }
-        code {
-            background: #f4f4f4;
-            padding: 2px 6px;
-            border-radius: 3px;
-            font-family: 'Courier New', monospace;
-        }
-        pre {
-            background: #2d2d2d;
-            color: #f8f8f2;
-            padding: 20px;
-            border-radius: 5px;
-            overflow-x: auto;
-            line-height: 1.4;
-        }
-        .step {
-            background: #e3f2fd;
-            border-left: 4px solid #2196f3;
-            padding: 15px;
-            margin: 15px 0;
-        }
-        ul {
-            margin: 10px 0;
-        }
-        li {
-            margin: 8px 0;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 12px;
-            text-align: left;
-        }
-        th {
-            background: #3498db;
-            color: white;
-        }
-        tr:nth-child(even) {
-            background: #f2f2f2;
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Teste — GitHub Pages</title>
+  <style>
+    body { font-family: system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial; margin: 2rem; color:#0b1220; background:#f6fbff; }
+    .card { background: #fff; padding: 1.25rem 1.5rem; border-radius: 8px; box-shadow: 0 6px 18px rgba(10,30,60,0.08); max-width:720px; }
+    h1 { margin: 0 0 0.25rem 0; font-size: 1.6rem; color:#07203a; }
+    p { margin: 0.25rem 0 0.75rem 0; color:#234; }
+    .ok { display:inline-block; padding:0.35rem 0.6rem; border-radius:6px; background:#e6fff1; color:#045d2b; font-weight:600; }
+    footer { margin-top:1rem; color:#445; font-size:0.9rem; }
+    code { background:#f1f5ff; padding:0.15rem 0.35rem; border-radius:4px; }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🎮 Implementação do Limitador de Multi-Client TFS</h1>
-        <p><strong>Guia de Conformidade com OTServList.org</strong></p>
+  <div class="card">
+    <h1>Teste — GitHub Pages</h1>
+    <p>Se você está vendo esta página, o <strong>index.html</strong> foi publicado corretamente.</p>
 
-        <div class="warning">
-            <strong>⚠️ Mudança Importante de Regra (5 de Dezembro de 2016)</strong><br>
-            O OTServList.org agora exige um máximo de <strong>4 multi-clients por IP</strong> para serem contados como jogadores reais. Servidores que violarem esta regra podem enfrentar penalidades ou remoção da listagem.
-        </div>
+    <p id="status"><span class="ok">Verificando...</span></p>
 
-        <h2>📋 Visão Geral</h2>
-        <p>Esta implementação modifica o arquivo <code>protocolstatus.cpp</code> no TFS 1.0/1.1/1.2 para reportar corretamente a contagem de jogadores enquanto limita a contagem de multi-clients do mesmo endereço IP.</p>
+    <p>Endereço esperado do site: <code>https://mateuzkl.github.io</code></p>
 
-        <div class="info">
-            <strong>Definições Importantes:</strong>
-            <ul>
-                <li><strong>Multi-client:</strong> Múltiplos personagens logados de um único endereço IP</li>
-                <li><strong>Jogadores reais:</strong> O número retornado ao OTServList via protocolo de status</li>
-                <li><strong>Limite:</strong> Máximo de 4 conexões por IP contadas como jogadores reais</li>
-            </ul>
-        </div>
+    <footer>
+      Dica: depois de subir este arquivo, vá em <strong>Settings → Pages</strong> e confirme a branch <code>main</code> e a pasta <code>/ (root)</code>.
+    </footer>
+  </div>
 
-        <h2>🔧 Implementação para TFS 1.0/1.1/1.2</h2>
-        
-        <div class="step">
-            <strong>Passo 1:</strong> Localize o arquivo<br>
-            Abra <code>src/protocolstatus.cpp</code> no diretório fonte do seu TFS.
-        </div>
-
-        <div class="step">
-            <strong>Passo 2:</strong> Encontre o código original<br>
-            Procure por esta linha:
-        </div>
-
-        <pre>players.append_attribute("online") = std::to_string(g_game.getPlayersOnline()).c_str();</pre>
-
-        <div class="step">
-            <strong>Passo 3:</strong> Substitua pela nova implementação
-        </div>
-
-        <pre>uint32_t real = 0;
-
-std::map&lt;uint32_t, uint32_t&gt; listIP;
-
-for (const auto& it : g_game.getPlayers()) {
-    if (it.second->getIP() != 0) {
-        auto ip = listIP.find(it.second->getIP());
-        if (ip != listIP.end()) {
-            listIP[it.second->getIP()]++;
-            if (listIP[it.second->getIP()] &lt; 5) {
-                real++;
-            }
-        } else {
-            listIP[it.second->getIP()] = 1;
-            real++;
-        }
-    }
-}
-players.append_attribute("online") = std::to_string(real).c_str();</pre>
-
-        <div class="step">
-            <strong>Passo 4:</strong> Recompile seu servidor<br>
-            Após fazer as alterações, recompile o TFS e reinicie seu servidor.
-        </div>
-
-        <h2>💡 Como Funciona</h2>
-        <ol>
-            <li><strong>Rastreamento de IP:</strong> Cria um mapa para armazenar contagem de conexões por endereço IP</li>
-            <li><strong>Iteração de Jogadores:</strong> Percorre todos os jogadores online</li>
-            <li><strong>Verificação de IP:</strong> Verifica se o jogador tem IP válido (diferente de 0)</li>
-            <li><strong>Lógica do Contador:</strong>
-                <ul>
-                    <li>Se o IP existe: incrementa o contador para aquele IP</li>
-                    <li>Só conta se conexões &lt; 5 (ou seja, 4 ou menos)</li>
-                    <li>Se IP novo: adiciona ao mapa com contagem 1</li>
-                </ul>
-            </li>
-            <li><strong>Relatório:</strong> Retorna contagem ajustada ao protocolo de status</li>
-        </ol>
-
-        <h2>📊 Exemplo Prático</h2>
-        <table>
-            <tr>
-                <th>IP</th>
-                <th>Personagens Logados</th>
-                <th>Contados como Real</th>
-            </tr>
-            <tr>
-                <td>192.168.1.10</td>
-                <td>3</td>
-                <td>3</td>
-            </tr>
-            <tr>
-                <td>192.168.1.20</td>
-                <td>4</td>
-                <td>4</td>
-            </tr>
-            <tr>
-                <td>192.168.1.30</td>
-                <td>8</td>
-                <td>4 (limitado)</td>
-            </tr>
-            <tr>
-                <td>192.168.1.40</td>
-                <td>2</td>
-                <td>2</td>
-            </tr>
-            <tr>
-                <td><strong>TOTAL</strong></td>
-                <td><strong>17 personagens</strong></td>
-                <td><strong>13 jogadores reais</strong></td>
-            </tr>
-        </table>
-
-        <h2>🛡️ Alternativa: Solução com IPTables</h2>
-        <p>Você também pode forçar um limite global de 4 conexões usando iptables:</p>
-        <pre>iptables -A INPUT -p tcp --dport 7172 -m connlimit --connlimit-above 4 -j DROP</pre>
-        <p><em>Substitua 7172 pela sua porta do jogo real</em></p>
-
-        <div class="warning">
-            <strong>Nota:</strong> IPTables bloqueia conexões no nível de rede, enquanto a solução em código apenas afeta a contagem. Escolha baseado na política de multi-client do seu servidor.
-        </div>
-
-        <h2>📌 Por Que Esta Mudança?</h2>
-        <p>O OTServList descobriu servidores onde <strong>10 pessoas reais controlavam 250 personagens</strong>, criando propaganda enganosa. Esta regra garante:</p>
-        <ul>
-            <li>Representação precisa da contagem de jogadores</li>
-            <li>Competição justa entre servidores</li>
-            <li>Melhor experiência para jogadores em potencial navegando nas listas de servidores</li>
-        </ul>
-
-        <h2>🔨 Implementação para TFS 8.6 (0.3.6)</h2>
-        <div class="info">
-            <strong>Para usuários do TFS 8.6:</strong> A implementação requer adaptação já que o TFS 0.3.6 usa estrutura de código diferente. Procure pela lógica similar de contagem de jogadores nos seus arquivos protocolstatus e aplique a mesma metodologia de rastreamento de IP com sintaxe C++ compatível com sua versão.
-        </div>
-
-        <div class="success">
-            <strong>💡 Dica para TFS 8.6:</strong><br>
-            O TFS 0.3.6 pode não suportar features do C++11 como <code>auto</code>. Você precisará declarar tipos explicitamente:
-            <pre style="background: #2d2d2d; color: #f8f8f2; padding: 10px; margin-top: 10px;">std::map&lt;uint32_t, uint32_t&gt;::iterator ip = listIP.find(it.second->getIP());</pre>
-        </div>
-
-        <h2>🐛 Troubleshooting</h2>
-        <div class="step">
-            <strong>Erro de Compilação?</strong>
-            <ul>
-                <li>Verifique se você tem suporte a C++11 habilitado</li>
-                <li>Certifique-se de que <code>&lt;map&gt;</code> está incluído no arquivo</li>
-                <li>Limpe o build anterior antes de recompilar</li>
-            </ul>
-        </div>
-
-        <div class="step">
-            <strong>Contagem Incorreta?</strong>
-            <ul>
-                <li>Verifique se o servidor foi recompilado e reiniciado</li>
-                <li>Teste com múltiplas contas do mesmo IP</li>
-                <li>Confirme que o código está no lugar correto do protocolstatus.cpp</li>
-            </ul>
-        </div>
-
-        <h2>📚 Recursos Adicionais</h2>
-        <ul>
-            <li><strong>Thread Original:</strong> Discussão no Fórum OTLand</li>
-            <li><strong>Contato:</strong> <a href="http://otservlist.org/contact">http://otservlist.org/contact</a></li>
-            <li><strong>Referência do Código:</strong> Postado por Gunz no OTLand</li>
-            <li><strong>TFS GitHub:</strong> <a href="https://github.com/otland/forgottenserver">https://github.com/otland/forgottenserver</a></li>
-        </ul>
-
-        <div class="warning">
-            <strong>⚠️ Prazo de Conformidade:</strong> Esta regra está sendo aplicada desde 5 de dezembro de 2016. Certifique-se de que seu servidor esteja em conformidade para manter a elegibilidade na listagem.
-        </div>
-
-        <h2>✅ Checklist de Implementação</h2>
-        <div class="success">
-            <ul style="list-style: none; padding-left: 0;">
-                <li>☐ Backup do arquivo protocolstatus.cpp original</li>
-                <li>☐ Código modificado corretamente</li>
-                <li>☐ Servidor recompilado sem erros</li>
-                <li>☐ Teste realizado com múltiplos multi-clients</li>
-                <li>☐ Contagem verificada no OTServList</li>
-                <li>☐ Documentação atualizada para sua equipe</li>
-            </ul>
-        </div>
-
-        <hr style="margin: 30px 0;">
-        <p style="text-align: center; color: #7f8c8d;">
-            <em>Desenvolvido pela comunidade OTLand • Implementação por Gunz</em>
-        </p>
-    </div>
+  <script>
+    // Mensagem de confirmação dinâmica
+    (function(){
+      const status = document.getElementById('status');
+      const host = location.hostname || '';
+      if (host.includes('github.io')) {
+        status.innerHTML = '<span class="ok">Tudo certo — site hospedado em <code>' + host + '</code></span>';
+      } else {
+        status.innerHTML = '<span style="color:#8a3d00;background:#fff4e6;padding:0.35rem 0.6rem;border-radius:6px;font-weight:600">Arquivo carregado localmente ou em outro host: <code>' + host + '</code></span>';
+      }
+    })();
+  </script>
 </body>
 </html>
